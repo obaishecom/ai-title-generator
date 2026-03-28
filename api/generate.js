@@ -11,23 +11,19 @@ export default async function handler(req, res) {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: `Generate 10 viral YouTube titles about: ${topic}`
+          inputs: `Generate exactly 10 YouTube titles about "${topic}". Each title on a new line.`
         })
       }
     );
 
     const data = await response.json();
 
-    console.log("HF RESPONSE:", JSON.stringify(data)); // 👈 DEBUG
+    console.log("HF RESPONSE:", data);
 
-    let text = "";
+    let text = data?.[0]?.generated_text || "";
 
-    if (Array.isArray(data) && data[0]?.generated_text) {
-      text = data[0].generated_text;
-    } else if (data.error) {
-      return res.status(500).json({ error: data.error });
-    } else {
-      text = JSON.stringify(data);
+    if (!text) {
+      return res.status(500).json({ error: "No result from AI" });
     }
 
     const titles = text.split("\n").filter(t => t.trim() !== "");
