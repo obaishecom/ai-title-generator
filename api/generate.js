@@ -3,7 +3,7 @@ export default async function handler(req, res) {
     const { topic } = req.body;
 
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/google/flan-t5-base",
+      "https://router.huggingface.co/hf-inference/models/google/flan-t5-small",
       {
         method: "POST",
         headers: {
