@@ -2,43 +2,91 @@
 <html>
 <head>
   <title>AI Title Generator</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 50px;
+    }
+
+    input {
+      padding: 12px;
+      width: 300px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      padding: 12px 20px;
+      margin-left: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #22c55e;
+      color: black;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    ul {
+      margin-top: 30px;
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #1e293b;
+      margin: 10px auto;
+      padding: 12px;
+      width: 400px;
+      border-radius: 8px;
+    }
+  </style>
 </head>
+
 <body>
 
-  <h2>AI YouTube Title Generator</h2>
+  <h1>🚀 AI YouTube Title Generator</h1>
+  <p>Generate viral titles instantly</p>
 
-  <input id="topic" placeholder="Enter topic" />
+  <input id="topic" placeholder="Enter topic..." />
   <button onclick="generate()">Generate</button>
 
   <ul id="result"></ul>
-  
+
   <script>
-  async function generate() {
-    const topic = document.getElementById("topic").value;
+    async function generate() {
+      const topic = document.getElementById("topic").value;
+      const list = document.getElementById("result");
 
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ topic })
-    });
+      list.innerHTML = "<li>⏳ Generating...</li>";
 
-    const data = await res.json();
-
-    console.log("FRONTEND DATA:", data);
-
-    const list = document.getElementById("result");
-    list.innerHTML = "";
-
-    if (data.titles && Array.isArray(data.titles)) {
-      data.titles.forEach(t => {
-        const li = document.createElement("li");
-        li.innerText = t;
-        list.appendChild(li);
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ topic })
       });
-    } else {
-      list.innerHTML = "<li>Error: " + (data.error || "No data") + "</li>";
+
+      const data = await res.json();
+
+      list.innerHTML = "";
+
+      if (data.titles) {
+        data.titles.forEach(t => {
+          const li = document.createElement("li");
+          li.innerText = t;
+          li.onclick = () => {
+            navigator.clipboard.writeText(t);
+            li.innerText = "✅ Copied!";
+          };
+          list.appendChild(li);
+        });
+      } else {
+        list.innerHTML = "<li>Error loading titles</li>";
+      }
     }
-  }
-</script>
+  </script>
+
 </body>
 </html>
