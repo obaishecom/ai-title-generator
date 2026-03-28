@@ -11,29 +11,34 @@
   <button onclick="generate()">Generate</button>
 
   <ul id="result"></ul>
-
+  
   <script>
-    async function generate() {
-      const topic = document.getElementById("topic").value;
+  async function generate() {
+    const topic = document.getElementById("topic").value;
 
-      const res = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic })
-      });
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ topic })
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      const list = document.getElementById("result");
-      list.innerHTML = "";
+    console.log("FRONTEND DATA:", data);
 
+    const list = document.getElementById("result");
+    list.innerHTML = "";
+
+    if (data.titles && Array.isArray(data.titles)) {
       data.titles.forEach(t => {
         const li = document.createElement("li");
         li.innerText = t;
         list.appendChild(li);
       });
+    } else {
+      list.innerHTML = "<li>Error: " + (data.error || "No data") + "</li>";
     }
-  </script>
-
+  }
+</script>
 </body>
 </html>
