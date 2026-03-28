@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Title Generator</title>
+</head>
+<body>
+
+  <h2>AI YouTube Title Generator</h2>
+
+  <input id="topic" placeholder="Enter topic" />
+  <button onclick="generate()">Generate</button>
+
+  <ul id="result"></ul>
+
+  <script>
+    async function generate() {
+      const topic = document.getElementById("topic").value;
+
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic })
+      });
+
+      const data = await res.json();
+
+      const list = document.getElementById("result");
+      list.innerHTML = "";
+
+      data.titles.forEach(t => {
+        const li = document.createElement("li");
+        li.innerText = t;
+        list.appendChild(li);
+      });
+    }
+  </script>
+
+</body>
+</html>
